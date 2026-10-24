@@ -1,0 +1,125 @@
+{
+  "tool": "tenantleak",
+  "version": "tenantleak 0.3.2, tenantleak-cloud 1.3.0",
+  "targets": [
+    "graphql",
+    "mcp",
+    "rag",
+    "rag_fixed",
+    "rest",
+    "supabase"
+  ],
+  "findings": [
+    {
+      "target": "graphql",
+      "op": "QUERY /graphql#node",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "graphql",
+      "op": "QUERY /graphql#project",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "graphql",
+      "op": "QUERY /graphql#me",
+      "kind": "sensitive_data_exposure"
+    },
+    {
+      "target": "mcp",
+      "op": "TOOL /mcp/tools/get_project",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "rag",
+      "op": "ASK /api/chat",
+      "kind": "cross_tenant_list"
+    },
+    {
+      "target": "rag",
+      "op": "ASK /api/chat",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/contracts/{contract_id}",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/projects/{project_id}",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/reports/{report_id}/export",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/search",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/users/{user_id}",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "rest",
+      "op": "POST /api/comments",
+      "kind": "cross_tenant_reference"
+    },
+    {
+      "target": "rest",
+      "op": "PATCH /api/projects/{project_id}",
+      "kind": "cross_tenant_write"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/me",
+      "kind": "sensitive_data_exposure"
+    },
+    {
+      "target": "rest",
+      "op": "PATCH /api/notes/{note_id}",
+      "kind": "tenant_field_injection"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/workspace/members",
+      "kind": "tenant_switch"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/workspace/settings",
+      "kind": "tenant_switch"
+    },
+    {
+      "target": "rest",
+      "op": "GET /api/reports/{report_id}/export",
+      "kind": "unauthenticated_access"
+    },
+    {
+      "target": "supabase",
+      "op": "GET /rest/v1/documents",
+      "kind": "cross_tenant_list"
+    },
+    {
+      "target": "supabase",
+      "op": "GET /rest/v1/invoices",
+      "kind": "cross_tenant_list"
+    },
+    {
+      "target": "supabase",
+      "op": "GET /rest/v1/invoices",
+      "kind": "unauthenticated_access"
+    }
+  ],
+  "called": [
+    "get_invoice",
+    "get_project",
+    "list_invoices",
+    "list_projects"
+  ]
+}

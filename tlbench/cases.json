@@ -1,0 +1,569 @@
+{
+  "benchmark": "tenantleak — isolation entre clients",
+  "cases": [
+    {
+      "id": "rest-read-project",
+      "target": "rest",
+      "op": "GET /api/projects/{project_id}",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "Projet d'un autre client lu par son identifiant"
+    },
+    {
+      "id": "rest-write-project",
+      "target": "rest",
+      "op": "PATCH /api/projects/{project_id}",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_write"
+      ],
+      "title": "Projet d'un autre client modifié"
+    },
+    {
+      "id": "rest-read-user",
+      "target": "rest",
+      "op": "GET /api/users/{user_id}",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "Fiche d'un utilisateur d'un autre client (données personnelles)"
+    },
+    {
+      "id": "rest-export-anon",
+      "target": "rest",
+      "op": "GET /api/reports/{report_id}/export",
+      "expect": "leak",
+      "kinds": [
+        "unauthenticated_access"
+      ],
+      "title": "Export de rapport sans authentification"
+    },
+    {
+      "id": "rest-export-cross",
+      "target": "rest",
+      "op": "GET /api/reports/{report_id}/export",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "Export de rapport d'un autre client"
+    },
+    {
+      "id": "rest-search-param",
+      "target": "rest",
+      "op": "GET /api/search",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read",
+        "tenant_switch",
+        "cross_tenant_list"
+      ],
+      "title": "Recherche qui croit le paramètre tenant_id"
+    },
+    {
+      "id": "rest-contract-hidden",
+      "target": "rest",
+      "op": "GET /api/contracts/{contract_id}",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "Contrat sans liste, joignable seulement par l'identifiant cité dans un projet"
+    },
+    {
+      "id": "rest-switch-settings",
+      "target": "rest",
+      "op": "GET /api/workspace/settings",
+      "expect": "leak",
+      "kinds": [
+        "tenant_switch"
+      ],
+      "title": "Réglages d'un autre client via l'en-tête X-Tenant-Id"
+    },
+    {
+      "id": "rest-switch-members",
+      "target": "rest",
+      "op": "GET /api/workspace/members",
+      "expect": "leak",
+      "kinds": [
+        "tenant_switch",
+        "cross_tenant_list"
+      ],
+      "title": "Membres d'un autre client via l'en-tête X-Tenant-Id"
+    },
+    {
+      "id": "rest-mass-note",
+      "target": "rest",
+      "op": "PATCH /api/notes/{note_id}",
+      "expect": "leak",
+      "kinds": [
+        "tenant_field_injection"
+      ],
+      "title": "Note déplacée chez un autre client par son champ tenant_id"
+    },
+    {
+      "id": "rest-ref-comment",
+      "target": "rest",
+      "op": "POST /api/comments",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_reference"
+      ],
+      "title": "Commentaire accepté sur le projet d'un autre client"
+    },
+    {
+      "id": "rest-me-apikey",
+      "target": "rest",
+      "op": "GET /api/me",
+      "expect": "leak",
+      "kinds": [
+        "sensitive_data_exposure"
+      ],
+      "title": "Clé d'API renvoyée en clair"
+    },
+    {
+      "id": "rest-safe-invoice",
+      "target": "rest",
+      "op": "GET /api/invoices/{invoice_id}",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Facture : contrôle du client correct"
+    },
+    {
+      "id": "rest-safe-document",
+      "target": "rest",
+      "op": "GET /api/projects/{project_id}/documents/{document_id}",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Document d'un projet : contrôle correct"
+    },
+    {
+      "id": "rest-safe-documents",
+      "target": "rest",
+      "op": "GET /api/projects/{project_id}/documents",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Documents d'un projet : liste filtrée"
+    },
+    {
+      "id": "rest-safe-note",
+      "target": "rest",
+      "op": "GET /api/notes/{note_id}",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Note : lecture contrôlée"
+    },
+    {
+      "id": "rest-safe-projects",
+      "target": "rest",
+      "op": "GET /api/projects",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Liste des projets filtrée par client"
+    },
+    {
+      "id": "rest-safe-invoices",
+      "target": "rest",
+      "op": "GET /api/invoices",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Liste des factures filtrée par client"
+    },
+    {
+      "id": "rest-safe-users",
+      "target": "rest",
+      "op": "GET /api/users",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Liste des utilisateurs filtrée par client"
+    },
+    {
+      "id": "rest-safe-reports",
+      "target": "rest",
+      "op": "GET /api/reports",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Liste des rapports filtrée par client"
+    },
+    {
+      "id": "gql-project",
+      "target": "graphql",
+      "op": "QUERY /graphql#project",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "project(id) sans contrôle du client"
+    },
+    {
+      "id": "gql-node",
+      "target": "graphql",
+      "op": "QUERY /graphql#node",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "node(id) Relay : contourne invoice(id), pourtant protégé"
+    },
+    {
+      "id": "gql-me-apikey",
+      "target": "graphql",
+      "op": "QUERY /graphql#me",
+      "expect": "leak",
+      "kinds": [
+        "sensitive_data_exposure"
+      ],
+      "title": "apiKey renvoyée en clair"
+    },
+    {
+      "id": "gql-safe-invoice",
+      "target": "graphql",
+      "op": "QUERY /graphql#invoice",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "invoice(id) : contrôle correct"
+    },
+    {
+      "id": "gql-safe-invoices",
+      "target": "graphql",
+      "op": "QUERY /graphql#invoices",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "invoices (connexion Relay) filtrée"
+    },
+    {
+      "id": "gql-safe-projects",
+      "target": "graphql",
+      "op": "QUERY /graphql#projects",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "projects filtrée"
+    },
+    {
+      "id": "supa-invoices-rls-off",
+      "target": "supabase",
+      "op": "GET /rest/v1/invoices",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_list",
+        "cross_tenant_read"
+      ],
+      "title": "Table sans RLS : lignes d'un autre client"
+    },
+    {
+      "id": "supa-invoices-anon",
+      "target": "supabase",
+      "op": "GET /rest/v1/invoices",
+      "expect": "leak",
+      "kinds": [
+        "unauthenticated_access"
+      ],
+      "title": "Table sans RLS : lisible avec la seule clé publique"
+    },
+    {
+      "id": "supa-documents-policy",
+      "target": "supabase",
+      "op": "GET /rest/v1/documents",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_list",
+        "cross_tenant_read"
+      ],
+      "title": "Politique « tout utilisateur connecté » sans contrôle du propriétaire"
+    },
+    {
+      "id": "supa-safe-documents-anon",
+      "target": "supabase",
+      "op": "GET /rest/v1/documents",
+      "expect": "safe",
+      "kinds": [
+        "unauthenticated_access"
+      ],
+      "title": "documents : rien sans connexion"
+    },
+    {
+      "id": "supa-safe-projects",
+      "target": "supabase",
+      "op": "GET /rest/v1/projects",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "projects : RLS par organisation correcte"
+    },
+    {
+      "id": "supa-safe-profiles",
+      "target": "supabase",
+      "op": "GET /rest/v1/profiles",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "profiles : chacun voit le sien"
+    },
+    {
+      "id": "supa-safe-members",
+      "target": "supabase",
+      "op": "GET /rest/v1/members",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "members : chacun voit les siens"
+    },
+    {
+      "id": "supa-safe-plans",
+      "target": "supabase",
+      "op": "GET /rest/v1/plans",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "plans : catalogue public par conception (piège)"
+    },
+    {
+      "id": "mcp-get-project",
+      "target": "mcp",
+      "op": "TOOL /mcp/tools/get_project",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "Outil get_project sans contrôle du client (cas Asana MCP)"
+    },
+    {
+      "id": "mcp-safe-get-invoice",
+      "target": "mcp",
+      "op": "TOOL /mcp/tools/get_invoice",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "get_invoice : refuse, en répétant l'identifiant demandé (piège)"
+    },
+    {
+      "id": "mcp-safe-list-projects",
+      "target": "mcp",
+      "op": "TOOL /mcp/tools/list_projects",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "list_projects filtrée"
+    },
+    {
+      "id": "mcp-safe-list-invoices",
+      "target": "mcp",
+      "op": "TOOL /mcp/tools/list_invoices",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "list_invoices filtrée (argument enum requis)"
+    },
+    {
+      "id": "mcp-never-delete",
+      "target": "mcp",
+      "op": "delete_project",
+      "expect": "never_called",
+      "kinds": [],
+      "title": "Outil annoté destructif : jamais appelé"
+    },
+    {
+      "id": "mcp-never-create",
+      "target": "mcp",
+      "op": "create_note",
+      "expect": "never_called",
+      "kinds": [],
+      "title": "Outil d'écriture sans annotation : jamais appelé"
+    },
+    {
+      "id": "mcp-never-write",
+      "target": "mcp",
+      "op": "get_status",
+      "expect": "never_called",
+      "kinds": [],
+      "title": "Outil annoté readOnlyHint: false : jamais appelé"
+    },
+    {
+      "id": "rag-shared-index",
+      "target": "rag",
+      "op": "ASK /api/chat",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_list"
+      ],
+      "title": "Index vectoriel partagé : le document témoin d'un client sort chez l'autre"
+    },
+    {
+      "id": "rag-safe-anon",
+      "target": "rag",
+      "op": "ASK /api/chat",
+      "expect": "safe",
+      "kinds": [
+        "unauthenticated_access"
+      ],
+      "title": "Assistant fermé sans connexion"
+    },
+    {
+      "id": "rag-fixed",
+      "target": "rag_fixed",
+      "op": "ASK /api/chat",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "Assistant corrigé (filtre par client) : aucune alerte attendue"
+    }
+  ],
+  "out_of_scope": [
+    {
+      "op": "GET /api/admin/audit-logs",
+      "why": "Un membre lit un journal réservé aux administrateurs de son propre client : contrôle de rôle, pas d'isolation entre clients."
+    },
+    {
+      "op": "JWT « alg: none »",
+      "why": "Des jetons forgés sans signature sont acceptés : faille d'authentification, hors du test d'isolation."
+    }
+  ]
+}
