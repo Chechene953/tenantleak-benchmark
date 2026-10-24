@@ -2,7 +2,7 @@
 
 Two customers, acme (token tok-acme) and globex (token tok-globex). `list_projects` and `get_invoice` check the
 customer; `get_project` does not (the Asana-style leak); `delete_project` and `create_note` must never be called;
-`search_documents` needs a free-text query. Answers alternate between JSON and an event stream, and every call
+`search_documents` takes a free-text query and searches every customer's projects (fixed: only the caller's). Answers alternate between JSON and an event stream, and every call
 must carry the session id given by `initialize`. Use `handler` with httpx.MockTransport.
 """
 from __future__ import annotations
@@ -96,4 +96,8 @@ def handler(request: httpx.Request) -> httpx.Response:
             return _answer(rpc_id, {"content": [{"type": "text", "text": f"Invoice {args.get('invoice_id')} not found"}],
                                     "isError": True}, stream=stream)
         return _answer(rpc_id, {"structuredContent": i, "content": [{"type": "text", "text": json.dumps(i)}]}, stream=stream)
+    if name == "search_documents":  # BUG: the search index is shared by every customer (fixed: filtered)
+        q = str(args.get("query", "")).lower()
+        hits = [p for p in PROJECTS if q and q in json.dumps(p).lower() and (not state["fixed"] or p["org"] == org)]
+        return _answer(rpc_id, _text({"results": hits}), stream=stream)
     return _answer(rpc_id, {"content": [{"type": "text", "text": "done"}]}, stream=stream)

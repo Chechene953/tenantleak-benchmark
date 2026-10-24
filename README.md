@@ -7,7 +7,7 @@ entre organisations, OWASP API1) : cinq cibles volontairement vulnérables et un
 GraphQL, Supabase, an MCP server, a RAG assistant) and an answer key written in advance. Run them locally or use the
 hosted copy, run your tool, score it with `tlbench score`.*
 
-- **23 fuites plantées** à trouver ;
+- **24 fuites plantées** à trouver ;
 - **23 opérations correctement protégées** : une alerte y est une fausse alerte (dont des pièges : un catalogue
   public par conception, une erreur qui répète l'identifiant demandé, un assistant corrigé) ;
 - **3 outils MCP à ne jamais appeler** (destructif, écriture) ;
@@ -53,7 +53,7 @@ puis `tlbench score resultats.json`. Les opérations s'écrivent comme dans `tlb
 (sans lui, une alerte vaut pour tous les cas de l'opération, pièges compris). Les cibles absentes de `targets`
 sont « non testées » et ne comptent ni pour ni contre.
 
-Score de référence (`results/tenantleak.json`, tenantleak 0.3.2, tenantleak-cloud 1.3.0) : 23/23 fuites trouvées,
+Score de référence (`results/tenantleak.json`, tenantleak 0.3.2, tenantleak-cloud 1.6.0) : 24/24 fuites trouvées,
 0/23 fausse alerte, 0/3 outil interdit appelé.
 
 ## Corrigé
@@ -100,6 +100,7 @@ Score de référence (`results/tenantleak.json`, tenantleak 0.3.2, tenantleak-cl
 | `supabase` | `GET /rest/v1/rpc/my_invoices` | safe | my_invoices() : filtre sur l'appelant |
 | `supabase` | `GET /storage/v1/object/avatars` | safe | avatars : bucket public par conception (piège) |
 | `mcp` | `TOOL /mcp/tools/get_project` | leak | Outil get_project sans contrôle du client (cas Asana MCP) |
+| `mcp` | `TOOL /mcp/tools/search_documents` | leak | Recherche en texte libre sur un index partagé par tous les clients |
 | `mcp` | `TOOL /mcp/tools/get_invoice` | safe | get_invoice : refuse, en répétant l'identifiant demandé (piège) |
 | `mcp` | `TOOL /mcp/tools/list_projects` | safe | list_projects filtrée |
 | `mcp` | `TOOL /mcp/tools/list_invoices` | safe | list_invoices filtrée (argument enum requis) |

@@ -1,6 +1,6 @@
 {
   "tool": "tenantleak",
-  "version": "tenantleak 0.3.2, tenantleak-cloud 1.3.0",
+  "version": "tenantleak 0.3.2, tenantleak-cloud 1.6.0",
   "targets": [
     "graphql",
     "mcp",
@@ -24,6 +24,11 @@
       "target": "graphql",
       "op": "QUERY /graphql#me",
       "kind": "sensitive_data_exposure"
+    },
+    {
+      "target": "mcp",
+      "op": "TOOL /mcp/tools/search_documents",
+      "kind": "cross_tenant_list"
     },
     {
       "target": "mcp",
@@ -135,6 +140,7 @@
     "get_invoice",
     "get_project",
     "list_invoices",
-    "list_projects"
+    "list_projects",
+    "search_documents"
   ]
 }

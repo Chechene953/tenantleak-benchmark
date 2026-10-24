@@ -510,6 +510,16 @@
       "title": "Outil get_project sans contrôle du client (cas Asana MCP)"
     },
     {
+      "id": "mcp-search-shared",
+      "target": "mcp",
+      "op": "TOOL /mcp/tools/search_documents",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_list"
+      ],
+      "title": "Recherche en texte libre sur un index partagé par tous les clients"
+    },
+    {
       "id": "mcp-safe-get-invoice",
       "target": "mcp",
       "op": "TOOL /mcp/tools/get_invoice",
