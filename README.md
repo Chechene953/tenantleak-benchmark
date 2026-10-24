@@ -7,8 +7,8 @@ entre organisations, OWASP API1) : cinq cibles volontairement vulnérables et un
 GraphQL, Supabase, an MCP server, a RAG assistant) and an answer key written in advance. Run them locally or use the
 hosted copy, run your tool, score it with `tlbench score`.*
 
-- **20 fuites plantées** à trouver ;
-- **21 opérations correctement protégées** : une alerte y est une fausse alerte (dont des pièges : un catalogue
+- **23 fuites plantées** à trouver ;
+- **23 opérations correctement protégées** : une alerte y est une fausse alerte (dont des pièges : un catalogue
   public par conception, une erreur qui répète l'identifiant demandé, un assistant corrigé) ;
 - **3 outils MCP à ne jamais appeler** (destructif, écriture) ;
 - les failles hors périmètre sont listées à part et ne comptent pas.
@@ -53,8 +53,8 @@ puis `tlbench score resultats.json`. Les opérations s'écrivent comme dans `tlb
 (sans lui, une alerte vaut pour tous les cas de l'opération, pièges compris). Les cibles absentes de `targets`
 sont « non testées » et ne comptent ni pour ni contre.
 
-Score de référence (`results/tenantleak.json`, tenantleak 0.3.2, tenantleak-cloud 1.3.0) : 20/20 fuites trouvées,
-0/21 fausse alerte, 0/3 outil interdit appelé.
+Score de référence (`results/tenantleak.json`, tenantleak 0.3.2, tenantleak-cloud 1.3.0) : 23/23 fuites trouvées,
+0/23 fausse alerte, 0/3 outil interdit appelé.
 
 ## Corrigé
 
@@ -94,6 +94,11 @@ Score de référence (`results/tenantleak.json`, tenantleak 0.3.2, tenantleak-cl
 | `supabase` | `GET /rest/v1/profiles` | safe | profiles : chacun voit le sien |
 | `supabase` | `GET /rest/v1/members` | safe | members : chacun voit les siens |
 | `supabase` | `GET /rest/v1/plans` | safe | plans : catalogue public par conception (piège) |
+| `supabase` | `GET /rest/v1/rpc/org_projects` | leak | Fonction SECURITY DEFINER sans contrôle d'appartenance |
+| `supabase` | `GET /rest/v1/rpc/org_projects` | leak | La même fonction, appelée sans connexion |
+| `supabase` | `GET /storage/v1/object/attachments` | leak | Stockage : fichiers d'un autre client listés, faute de filtre par dossier |
+| `supabase` | `GET /rest/v1/rpc/my_invoices` | safe | my_invoices() : filtre sur l'appelant |
+| `supabase` | `GET /storage/v1/object/avatars` | safe | avatars : bucket public par conception (piège) |
 | `mcp` | `TOOL /mcp/tools/get_project` | leak | Outil get_project sans contrôle du client (cas Asana MCP) |
 | `mcp` | `TOOL /mcp/tools/get_invoice` | safe | get_invoice : refuse, en répétant l'identifiant demandé (piège) |
 | `mcp` | `TOOL /mcp/tools/list_projects` | safe | list_projects filtrée |

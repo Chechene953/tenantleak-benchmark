@@ -112,7 +112,22 @@
     },
     {
       "target": "supabase",
+      "op": "GET /storage/v1/object/attachments",
+      "kind": "cross_tenant_list"
+    },
+    {
+      "target": "supabase",
+      "op": "GET /rest/v1/rpc/org_projects",
+      "kind": "cross_tenant_read"
+    },
+    {
+      "target": "supabase",
       "op": "GET /rest/v1/invoices",
+      "kind": "unauthenticated_access"
+    },
+    {
+      "target": "supabase",
+      "op": "GET /rest/v1/rpc/org_projects",
       "kind": "unauthenticated_access"
     }
   ],

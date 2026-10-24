@@ -437,6 +437,69 @@
       "title": "plans : catalogue public par conception (piège)"
     },
     {
+      "id": "supa-rpc-definer",
+      "target": "supabase",
+      "op": "GET /rest/v1/rpc/org_projects",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_read"
+      ],
+      "title": "Fonction SECURITY DEFINER sans contrôle d'appartenance"
+    },
+    {
+      "id": "supa-rpc-anon",
+      "target": "supabase",
+      "op": "GET /rest/v1/rpc/org_projects",
+      "expect": "leak",
+      "kinds": [
+        "unauthenticated_access"
+      ],
+      "title": "La même fonction, appelée sans connexion"
+    },
+    {
+      "id": "supa-storage-folder",
+      "target": "supabase",
+      "op": "GET /storage/v1/object/attachments",
+      "expect": "leak",
+      "kinds": [
+        "cross_tenant_list",
+        "cross_tenant_read"
+      ],
+      "title": "Stockage : fichiers d'un autre client listés, faute de filtre par dossier"
+    },
+    {
+      "id": "supa-safe-rpc-mine",
+      "target": "supabase",
+      "op": "GET /rest/v1/rpc/my_invoices",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "my_invoices() : filtre sur l'appelant"
+    },
+    {
+      "id": "supa-safe-avatars",
+      "target": "supabase",
+      "op": "GET /storage/v1/object/avatars",
+      "expect": "safe",
+      "kinds": [
+        "cross_tenant_read",
+        "cross_tenant_write",
+        "cross_tenant_list",
+        "unauthenticated_access",
+        "tenant_switch",
+        "tenant_field_injection",
+        "cross_tenant_reference"
+      ],
+      "title": "avatars : bucket public par conception (piège)"
+    },
+    {
       "id": "mcp-get-project",
       "target": "mcp",
       "op": "TOOL /mcp/tools/get_project",
